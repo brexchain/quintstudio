@@ -12,6 +12,7 @@ export interface StringConfig {
 
 interface GuitarHubProps {
   currentNote: string | null;
+  chromaticNote?: string | null;
   playedNote?: string | null;
   playedOctave?: number | null;
   playingRiff?: { id: string; activeIndex: number } | null;
@@ -35,6 +36,7 @@ interface GuitarHubProps {
 
 export function GuitarHub({ 
   currentNote, 
+  chromaticNote,
   playedNote, 
   playedOctave,
   playingRiff, 
@@ -177,7 +179,23 @@ export function GuitarHub({
           style={{ border: `12px solid #1a0f0a` }}
         >
           {isTunerMode ? (
-            <div className="flex flex-col items-center gap-1 w-full px-12">
+            <div className="flex flex-col items-center gap-1 w-full px-12 relative h-full justify-center">
+              {/* Large Absolute Note Display (Chromatic) */}
+              <AnimatePresence>
+                {chromaticNote && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 0.15, scale: 1.1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                  >
+                    <span className="text-[160px] font-black italic tracking-tighter text-white/50 select-none">
+                      {chromaticNote}
+                    </span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <AnimatePresence mode="wait">
                 {accuracy && (
                   <motion.div

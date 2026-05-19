@@ -8,6 +8,7 @@ interface NeedleBarProps {
   active: boolean;
   theme?: 'dark' | 'light';
   currentNote?: string | null;
+  chromaticNote?: string | null;
   amplitude?: number;
 }
 
@@ -32,7 +33,7 @@ const Sparkle = ({ x, y, size, delay }: { x: number, y: number, size: number, de
   </motion.div>
 );
 
-export function NeedleBar({ cents, active, theme = 'dark', currentNote, amplitude = 0 }: NeedleBarProps) {
+export function NeedleBar({ cents, active, theme = 'dark', currentNote, chromaticNote, amplitude = 0 }: NeedleBarProps) {
   // cents ranges from -50 to 50
   const percentage = ((cents + 50) / 100) * 100;
   const isPerfect = Math.abs(cents) <= 1.5; // Slightly more forgiving for "perfect" feel
@@ -71,6 +72,8 @@ export function NeedleBar({ cents, active, theme = 'dark', currentNote, amplitud
     }
   }, [isPerfect, active]);
 
+  const displayNote = chromaticNote || currentNote;
+
   return (
     <div className="w-full max-w-md px-8 py-4">
       <div className={cn(
@@ -80,9 +83,9 @@ export function NeedleBar({ cents, active, theme = 'dark', currentNote, amplitud
         <span className={cn(cents < -40 && active && "text-red-400 font-bold")}>-50</span>
         <div className="flex flex-col items-center">
            <AnimatePresence mode="wait">
-            {active && currentNote && (
+            {active && displayNote && (
               <motion.div 
-                key={currentNote}
+                key={displayNote}
                 initial={{ opacity: 0, y: 10, scale: 0.8 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.8 }}
@@ -100,12 +103,14 @@ export function NeedleBar({ cents, active, theme = 'dark', currentNote, amplitud
                 <span className={cn(
                   "text-[10px] font-bold transition-colors z-10",
                   isPerfect ? "text-emerald-400" : (isDark ? "text-white/60" : "text-black/60")
-                )}>TARGET</span>
+                )}>
+                  {currentNote && currentNote !== chromaticNote ? `TARGETING ${currentNote}` : 'DETECTED'}
+                </span>
                 <span className={cn(
                   "text-4xl font-black italic -mt-2 tracking-tighter transition-all duration-300 z-10",
                   isPerfect ? "text-emerald-400 scale-125 drop-shadow-[0_0_12px_rgba(16,185,129,0.8)]" : "text-white"
                 )}>
-                  {currentNote}
+                  {displayNote}
                 </span>
               </motion.div>
             )}

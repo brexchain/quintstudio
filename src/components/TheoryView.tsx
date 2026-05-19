@@ -224,9 +224,9 @@ export function TheoryView({
       </div>
 
       {/* Sonic Monitor Section */}
-      <div className="w-full max-w-xl px-4">
+      <div className="w-full max-w-4xl px-4">
           <div className={cn(
-             "p-4 rounded-3xl border flex items-center justify-between backdrop-blur-md transition-all duration-500",
+             "p-6 rounded-[2.5rem] border flex flex-col md:flex-row items-center justify-between backdrop-blur-md transition-all duration-500 gap-6",
              isDark ? "bg-white/5 border-white/5" : "bg-black/5 border-black/5"
           )}>
              <div className="flex items-center gap-4">
@@ -319,7 +319,7 @@ export function TheoryView({
         </div>
       </div>
 
-      <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+      <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4">
         {/* Chord Family Explanation */}
         <div className={cn(
           "p-8 rounded-[3rem] border backdrop-blur-xl relative overflow-hidden flex flex-col",
@@ -407,9 +407,9 @@ export function TheoryView({
       </div>
 
       {/* Advanced Soloing Section */}
-      <div className="w-full max-w-5xl px-4 mt-8 mb-8">
+      <div className="w-full max-w-7xl px-4 mt-8 mb-16">
         <div className={cn(
-          "p-10 rounded-[4rem] border backdrop-blur-2xl relative overflow-hidden flex flex-col gap-10",
+          "p-12 rounded-[5rem] border backdrop-blur-2xl relative overflow-hidden flex flex-col gap-12",
           isDark ? "bg-white/5 border-white/5 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)]" : "bg-white border-black/5 shadow-2xl"
         )}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">

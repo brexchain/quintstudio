@@ -7,7 +7,8 @@ const BUFFER_SIZE = 4096;
 
 export interface PitchData {
   frequency: number;
-  note: string;
+  note: string; // The "Target" note if targetFrequencies provided
+  chromaticNote: string; // The "Actual" chromatic note
   cents: number;
   clarity: number;
   amplitude: number;
@@ -20,9 +21,17 @@ export function getNoteFromFrequency(
   frequency: number, 
   referenceA: number = 440, 
   targetFrequencies?: { note: string, freq: number, octave?: number }[]
-): { note: string, cents: number, targetFreq?: number } {
-  if (frequency <= 0) return { note: '?', cents: 0 };
+): { note: string, chromaticNote: string, cents: number, targetFreq?: number } {
+  if (frequency <= 0) return { note: '?', chromaticNote: '?', cents: 0 };
   
+  // Always calculate chromatic first for "Absolute Accuracy"
+  const n = 12 * Math.log2(frequency / referenceA);
+  const roundedN = Math.round(n);
+  const chromaticCents = Math.round((n - roundedN) * 100);
+  const noteIndex = (roundedN + 69) % 12;
+  const wrappedIndex = noteIndex < 0 ? noteIndex + 12 : noteIndex;
+  const chromaticNoteName = NOTES[wrappedIndex];
+
   if (targetFrequencies && targetFrequencies.length > 0) {
     // Quality check: find the closest string by frequency ratio
     let closestTarget = targetFrequencies[0];
@@ -45,23 +54,17 @@ export function getNoteFromFrequency(
     if (Math.abs(cents) < 350) {
       return {
         note: closestTarget.note,
+        chromaticNote: chromaticNoteName,
         cents,
         targetFreq: closestTarget.freq
       };
     }
   }
 
-  // Chromatic fallback
-  const n = 12 * Math.log2(frequency / referenceA);
-  const roundedN = Math.round(n);
-  const cents = Math.round((n - roundedN) * 100);
-  
-  const noteIndex = (roundedN + 69) % 12;
-  const wrappedIndex = noteIndex < 0 ? noteIndex + 12 : noteIndex;
-  
   return {
-    note: NOTES[wrappedIndex],
-    cents
+    note: chromaticNoteName,
+    chromaticNote: chromaticNoteName,
+    cents: chromaticCents
   };
 }
 
@@ -220,7 +223,7 @@ export function usePitchDetection(referenceA: number = 440, targetFrequencies?: 
         
       lastFrequency.current = smoothedFreq;
       
-      const { note, cents: rawCents, targetFreq } = getNoteFromFrequency(smoothedFreq, referenceRef.current, targetFrequencies);
+      const { note, chromaticNote, cents: rawCents, targetFreq } = getNoteFromFrequency(smoothedFreq, referenceRef.current, targetFrequencies);
 
       // 2. Adaptive Cents Smoothing for stable display
       // When the note is the same, we apply heavy smoothing to cents to avoid "jittery" needle
@@ -247,6 +250,7 @@ export function usePitchDetection(referenceA: number = 440, targetFrequencies?: 
         setPitchData({
           frequency: smoothedFreq,
           note,
+          chromaticNote,
           cents: Math.round(smoothedCents),
           clarity,
           amplitude: rms,

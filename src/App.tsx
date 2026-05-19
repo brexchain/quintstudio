@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Settings, Mic, MicOff, Music, Volume2, Sparkles, Clock, Compass, Zap, LayoutGrid, Sun, Moon, MessageCircle, Languages, Maximize, Activity, Brain, Plus, Waves, Minus, Guitar, Drum, Keyboard, AudioWaveform, Info, RotateCcw, Play, Repeat, Square, Pause, Trash2, Bell, BellOff } from 'lucide-react';
+import { Settings, Mic, MicOff, Music, Volume2, Sparkles, Clock, Compass, Zap, LayoutGrid, Sun, Moon, MessageCircle, Languages, Maximize, Activity, Brain, Plus, Waves, Minus, Guitar, Drum, Keyboard, AudioWaveform, Info, RotateCcw, Play, Repeat, Square, Pause, Trash2, Share2, Bell, BellOff } from 'lucide-react';
 import { usePitchDetection } from './hooks/usePitchDetection';
 import { GuitarHub } from './components/GuitarHub';
 import { NeedleBar } from './components/NeedleBar';
@@ -2573,87 +2573,112 @@ export default function App() {
                 </div>
 
                 {/* Mixer / Composition Tools */}
-                <div className="w-full max-w-4xl border-t border-white/5 pt-12 flex flex-col gap-10">
-                  <div className="flex flex-col gap-6">
-                      <div className="flex items-center justify-between px-2">
+                <div className="w-full max-w-7xl border-t border-white/5 pt-12 flex flex-col gap-12">
+                  <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
+                    {/* Mixer Left */}
+                    <div className="xl:col-span-5 flex flex-col gap-8">
                         <div className="flex flex-col gap-1">
                           <h3 className="text-xs uppercase tracking-[0.3em] font-black opacity-40">Studio Mixer</h3>
                           <p className="text-[9px] opacity-20 font-bold uppercase">Signal Matrix</p>
                         </div>
+                        
                         {soloInstrument && (
                           <button 
                             onClick={() => setSoloInstrument(null)}
-                            className="px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[9px] font-black uppercase tracking-widest text-amber-500 animate-pulse"
+                            className="w-fit px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-[9px] font-black uppercase tracking-widest text-amber-500 animate-pulse"
                           >
                             Solo Active: {soloInstrument} (Clear)
                           </button>
                         )}
-                      </div>
-                      <div className="flex flex-wrap gap-3">
-                        {[
-                          { id: 'acoustic', label: 'Acoustic', icon: Guitar },
-                          { id: 'electric', label: 'Electric', icon: Zap },
-                          { id: 'bass', label: 'Bass Guitar', icon: AudioWaveform },
-                          { id: 'piano', label: 'Grand Piano', icon: Keyboard },
-                          { id: 'synth', label: 'Studio Synth', icon: Sparkles },
-                          { id: 'drums', label: 'Rhythm Kit', icon: Drum },
-                        ].map(instr => (
-                          <div 
-                            key={instr.id}
-                            className={cn(
-                              "flex items-center gap-3 px-4 py-2.5 rounded-2xl border transition-all duration-300",
-                              activeInstruments.includes(instr.id) 
-                                ? "bg-white/[0.03] border-white/10" 
-                                : "opacity-10 grayscale blur-[1px]"
-                            )}
-                          >
-                              <instr.icon size={14} className={activeInstruments.includes(instr.id) ? "text-emerald-500" : ""} />
-                              <span className="text-[10px] font-black uppercase tracking-widest">{instr.label}</span>
-                              {activeInstruments.includes(instr.id) && (
-                                <button 
-                                onClick={() => setSoloInstrument(soloInstrument === instr.id ? null : instr.id)}
-                                className={cn(
-                                  "ml-2 px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border transition-all",
-                                  soloInstrument === instr.id 
-                                    ? "bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20" 
-                                    : "border-white/10 opacity-30 hover:opacity-100 hover:border-white/30"
-                                )}
-                                >
-                                  Solo
-                                </button>
+                        
+                        <div className="flex flex-wrap gap-3">
+                          {[
+                            { id: 'acoustic', label: 'Acoustic', icon: Guitar },
+                            { id: 'electric', label: 'Electric', icon: Zap },
+                            { id: 'bass', label: 'Bass Guitar', icon: AudioWaveform },
+                            { id: 'piano', label: 'Grand Piano', icon: Keyboard },
+                            { id: 'synth', label: 'Studio Synth', icon: Sparkles },
+                            { id: 'drums', label: 'Rhythm Kit', icon: Drum },
+                          ].map(instr => (
+                            <div 
+                              key={instr.id}
+                              className={cn(
+                                "flex items-center gap-3 px-4 py-2.5 rounded-2xl border transition-all duration-300",
+                                activeInstruments.includes(instr.id) 
+                                  ? "bg-white/[0.03] border-white/10" 
+                                  : "opacity-10 grayscale blur-[1px]"
                               )}
-                          </div>
-                        ))}
+                            >
+                                <instr.icon size={14} className={activeInstruments.includes(instr.id) ? "text-emerald-500" : ""} />
+                                <span className="text-[10px] font-black uppercase tracking-widest">{instr.label}</span>
+                                {activeInstruments.includes(instr.id) && (
+                                  <button 
+                                  onClick={() => setSoloInstrument(soloInstrument === instr.id ? null : instr.id)}
+                                  className={cn(
+                                    "ml-2 px-2.5 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest border transition-all",
+                                    soloInstrument === instr.id 
+                                      ? "bg-amber-500 border-amber-500 text-white shadow-lg shadow-amber-500/20" 
+                                      : "border-white/10 opacity-30 hover:opacity-100 hover:border-white/30"
+                                  )}
+                                  >
+                                    Solo
+                                  </button>
+                                )}
+                            </div>
+                          ))}
+                        </div>
+                    </div>
+
+                    {/* Transpose Right */}
+                    <div className="xl:col-span-7 flex flex-col gap-8">
+                      <div className="flex items-center justify-between">
+                        <div className="flex flex-col gap-1">
+                          <h3 className="text-xs uppercase tracking-[0.3em] font-black opacity-40">Composition Tools</h3>
+                        </div>
+                        <div className="flex gap-2 p-1.5 rounded-2xl bg-white/5 border border-white/5">
+                          <button 
+                            onClick={() => transposeSong(-1)}
+                            className="px-4 py-2 rounded-xl hover:bg-white/10 transition-all text-[9px] uppercase tracking-widest font-black flex items-center gap-2"
+                          >
+                             <Minus size={12}/>
+                             Transpose -
+                          </button>
+                          <div className="w-px h-6 bg-white/5 mx-1" />
+                          <button 
+                            onClick={() => transposeSong(1)}
+                            className="px-4 py-2 rounded-xl hover:bg-white/10 transition-all text-[9px] uppercase tracking-widest font-black flex items-center gap-2"
+                          >
+                             <Plus size={12}/>
+                             Transpose +
+                          </button>
+                        </div>
                       </div>
-                  </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-xs uppercase tracking-[0.3em] font-black opacity-40">Composition Tools</h3>
-                    </div>
-                    <div className="flex gap-2 p-1.5 rounded-2xl bg-white/5 border border-white/5">
-                      <button 
-                        onClick={() => transposeSong(-1)}
-                        className="p-2 rounded-xl hover:bg-white/10 transition-all text-[9px] uppercase tracking-widest font-black"
-                      >
-                         Transpose -
-                      </button>
-                      <div className="w-px h-6 bg-white/5 mx-1" />
-                      <button 
-                        onClick={() => transposeSong(1)}
-                        className="p-2 rounded-xl hover:bg-white/10 transition-all text-[9px] uppercase tracking-widest font-black"
-                      >
-                         Transpose +
-                      </button>
+                      <div className="p-8 rounded-[40px] bg-white/[0.02] border border-white/5 flex items-center justify-between gap-8">
+                        <div className="flex flex-col gap-2">
+                           <h4 className="text-xl font-black italic tracking-tighter uppercase">Harmonic Transposition</h4>
+                           <p className="text-[10px] opacity-40 leading-relaxed max-w-sm">
+                             Shift the entire sequence by semitones while maintaining the relative harmonic relationships between chords.
+                           </p>
+                        </div>
+                        <div className="flex items-baseline gap-1">
+                           <span className="text-4xl font-black italic text-emerald-500">±12</span>
+                           <span className="text-[10px] font-black opacity-20 uppercase tracking-widest">Octave Range</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-6">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-[10px] uppercase tracking-widest font-black opacity-40">Pro-Level Progressions</h4>
-                      <span className="text-[8px] font-bold opacity-20 uppercase">Tap to Apply</span>
+                  <div className="flex flex-col gap-8 pb-32">
+                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                      <div className="flex flex-col gap-1">
+                        <h4 className="text-xl font-black uppercase tracking-tighter italic">Pro-Level Progressions</h4>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Genre blueprints for instant inspiration</p>
+                      </div>
+                      <span className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[9px] font-black opacity-40 uppercase tracking-[0.2em]">Tap to Apply</span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6">
                        {PRESETS.map((p) => {
                          const isFlipped = flippedPresets.includes(p.name);
                          const offset = presetOffsets[p.name] || 0;
@@ -2777,54 +2802,76 @@ export default function App() {
                 </div>
 
                 {/* Direct Entry & Sharing */}
-                <div className="w-full max-w-4xl border-t border-white/5 pt-12 flex flex-col gap-8 mb-24">
-                   <div className="flex flex-col gap-2">
-                    <h3 className="text-xs uppercase tracking-[0.3em] font-black opacity-40">Transcription & Sharing</h3>
-                    <p className="text-[10px] opacity-40 italic">Bulk-add chords or copy your composition for band members.</p>
-                  </div>
+                <div className="w-full max-w-7xl border-t border-white/5 pt-12 flex flex-col gap-12 mb-32">
+                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                     <div className="flex flex-col gap-6 p-8 rounded-[3rem] bg-white/[0.02] border border-white/5">
+                        <div className="flex flex-col gap-2">
+                          <h3 className="text-xl font-black italic uppercase tracking-tighter">Transcription Matrix</h3>
+                          <p className="text-[10px] opacity-40 italic">Bulk-add chords or copy your composition for band members.</p>
+                        </div>
+                        
+                        <div className="flex flex-col gap-4">
+                          <div className="flex gap-2 p-3 rounded-[2rem] border border-white/10 bg-white/5 focus-within:border-emerald-500/50 transition-all shadow-inner">
+                            <input 
+                              type="text"
+                              placeholder="Paste chord sequence (e.g. C G Am F)..."
+                              value={playbackString}
+                              onChange={(e) => setPlaybackString(e.target.value)}
+                              className="flex-1 bg-transparent border-none outline-none px-4 py-3 font-mono text-sm placeholder:opacity-20"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  const chords = playbackString.split(/[\s,]+/).filter(c => c.trim());
+                                  chords.forEach(c => {
+                                    const isMinor = c.includes('m');
+                                    const root = c.replace('m', '');
+                                    addBlock(root, isMinor);
+                                  });
+                                  setPlaybackString('');
+                                }
+                              }}
+                            />
+                            <button
+                              onClick={() => {
+                                const chords = playbackString.split(/[\s,]+/).filter(c => c.trim());
+                                chords.forEach(c => {
+                                  const isMinor = c.includes('m');
+                                  const root = c.replace('m', '');
+                                  addBlock(root, isMinor);
+                                });
+                                setPlaybackString('');
+                              }}
+                              className="px-10 py-3 rounded-2xl bg-emerald-500 text-white hover:bg-emerald-400 transition-all font-black uppercase tracking-widest text-[10px] shadow-lg shadow-emerald-500/20"
+                            >
+                              Add to Studio
+                            </button>
+                          </div>
+                        </div>
+                                         <div className="flex flex-col gap-6 p-8 rounded-[3rem] bg-emerald-500/5 border border-emerald-500/10 justify-center">
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-500 flex items-center justify-center text-white">
+                               <Share2 size={24} />
+                            </div>
+                            <div className="flex flex-col">
+                               <h3 className="text-xl font-black italic tracking-tighter uppercase">Snapshot Studio</h3>
+                               <p className="text-[10px] opacity-40">Generate a persistent link for this arrangement.</p>
+                            </div>
+                        </div>
+                        <button
+                          onClick={shareArrangement}
+                          className="w-full py-5 rounded-3xl bg-white/5 border border-white/10 text-emerald-500 font-black uppercase tracking-[0.2em] text-xs hover:bg-white/10 transition-all flex items-center justify-center gap-3"
+                        >
+                           <Compass size={16} />
+                           Generate Arrangement Link
+                        </button>
+                     </div>
+                   </div>
 
-                  <div className="flex flex-col gap-4">
-                    <div className="flex gap-2 p-2 rounded-3xl border border-white/5 bg-white/5 focus-within:border-emerald-500/50 transition-all">
-                      <input 
-                        type="text"
-                        placeholder="Paste chord sequence (e.g. C G Am F)..."
-                        value={playbackString}
-                        onChange={(e) => setPlaybackString(e.target.value)}
-                        className="flex-1 bg-transparent border-none outline-none px-4 py-2 font-mono text-sm placeholder:opacity-20"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            const chords = playbackString.split(/[\s,]+/).filter(c => c.trim());
-                            chords.forEach(c => {
-                              const isMinor = c.includes('m');
-                              const root = c.replace('m', '');
-                              addBlock(root, isMinor);
-                            });
-                            setPlaybackString('');
-                          }
-                        }}
-                      />
-                      <button
-                        onClick={() => {
-                          const chords = playbackString.split(/[\s,]+/).filter(c => c.trim());
-                          chords.forEach(c => {
-                            const isMinor = c.includes('m');
-                            const root = c.replace('m', '');
-                            addBlock(root, isMinor);
-                          });
-                          setPlaybackString('');
-                        }}
-                        className="px-8 py-3 rounded-2xl bg-white/10 hover:bg-white/20 transition-all font-black uppercase tracking-widest text-[10px]"
-                      >
-                        Add to Studio
-                      </button>
-                    </div>
-
-                    <div className="flex justify-center">
+                   <div className="flex justify-center mt-4">
                       <button
                         onClick={() => {
                           const text = songBlocks.map(b => {
-                            const section = b.section ? `\n[${b.section.toUpperCase()}]\n` : "";
-                            const chord = b.type === 'pause' ? '|' : (b.note + (b.isMinor ? 'm' : ''));
+                             const section = b.section ? `\n[${b.section.toUpperCase()}]\n` : "";
+                             const chord = b.type === 'pause' ? '|' : (b.note + (b.isMinor ? 'm' : ''));
                             const lyric = b.lyrics ? ` (${b.lyrics})` : "";
                             return `${section}${chord}${lyric}`;
                           }).join(" ");
@@ -3082,8 +3129,8 @@ export default function App() {
 
                   {/* Visualization Station */}
                   <section className={cn(
-                    "flex flex-col items-center gap-8 w-full max-w-xl",
-                    settings.layoutMode === 'horizontal' ? "lg:max-w-md" : "mt-6"
+                    "flex flex-col items-center gap-8 w-full max-w-4xl",
+                    settings.layoutMode === 'horizontal' ? "lg:max-w-2xl" : "mt-6"
                   )}>
                     <div className="w-full flex flex-col items-center gap-2">
                       <NeedleBar 
@@ -3091,6 +3138,7 @@ export default function App() {
                         active={!!pitchData} 
                         theme={theme} 
                         currentNote={pitchData?.note}
+                        chromaticNote={pitchData?.chromaticNote}
                         amplitude={pitchData?.amplitude}
                       />
                     </div>
@@ -3098,6 +3146,7 @@ export default function App() {
                     <div className="relative group">
                       <GuitarHub 
                         currentNote={pitchData?.note ?? null} 
+                        chromaticNote={pitchData?.chromaticNote}
                         playedNote={playedReferenceNote?.note}
                         playedOctave={playedReferenceNote?.octave}
                         playingRiff={playingRiff}
