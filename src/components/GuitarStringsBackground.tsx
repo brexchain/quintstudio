@@ -7,6 +7,8 @@ interface GuitarStringsBackgroundProps {
   tunedStrings: string[];
   activeNote?: string | null;
   activeCents?: number;
+  activeFreq?: number;
+  targetFreq?: number;
   opacity?: number;
   className?: string;
   showLabels?: boolean;
@@ -18,6 +20,8 @@ export function GuitarStringsBackground({
   tunedStrings, 
   activeNote = null,
   activeCents = 0,
+  activeFreq,
+  targetFreq,
   opacity = 0.3,
   className,
   showLabels = true,
@@ -97,7 +101,17 @@ export function GuitarStringsBackground({
         {[...allStrings].reverse().map((string, revIdx) => {
         const idx = allStrings.length - 1 - revIdx;
         const isTuned = tunedStrings.includes(string.label);
-        const isActive = activeNote === string.note;
+        
+        // Precise matching using targetFreq or frequency ratio if targetFreq is missing
+        let isActive = false;
+        if (targetFreq) {
+          isActive = Math.abs(targetFreq - string.freq) < 1;
+        } else if (activeFreq) {
+          isActive = Math.abs(Math.log2(activeFreq / string.freq)) < 0.05;
+        } else {
+          isActive = activeNote === string.note;
+        }
+
         const isPerfectActive = isActive && isPerfect;
         
         // Realistic guitar string thickness (idx 0 is Low E)

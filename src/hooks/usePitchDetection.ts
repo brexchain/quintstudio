@@ -11,12 +11,47 @@ export interface PitchData {
   cents: number;
   clarity: number;
   amplitude: number;
+  targetFreq?: number;
 }
 
 const NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
-export function getNoteFromFrequency(frequency: number, referenceA: number = 440): { note: string, cents: number } {
+export function getNoteFromFrequency(
+  frequency: number, 
+  referenceA: number = 440, 
+  targetFrequencies?: { note: string, freq: number, octave?: number }[]
+): { note: string, cents: number, targetFreq?: number } {
   if (frequency <= 0) return { note: '?', cents: 0 };
+  
+  if (targetFrequencies && targetFrequencies.length > 0) {
+    // Quality check: find the closest string by frequency ratio
+    let closestTarget = targetFrequencies[0];
+    let minRatio = Infinity;
+
+    for (const target of targetFrequencies) {
+      const ratio = Math.abs(Math.log2(frequency / target.freq));
+      if (ratio < minRatio) {
+        minRatio = ratio;
+        closestTarget = target;
+      }
+    }
+
+    // Calculate cents deviation from THIS specific target
+    const cents = Math.round(1200 * Math.log2(frequency / closestTarget.freq));
+    
+    // Snapping logic: In "Instrument Mode", we always want to map to the nearest string 
+    // to avoid "Target F" confusion when tuning guitar. 
+    // Snap if within 3.5 semitones (covers mid-points between strings)
+    if (Math.abs(cents) < 350) {
+      return {
+        note: closestTarget.note,
+        cents,
+        targetFreq: closestTarget.freq
+      };
+    }
+  }
+
+  // Chromatic fallback
   const n = 12 * Math.log2(frequency / referenceA);
   const roundedN = Math.round(n);
   const cents = Math.round((n - roundedN) * 100);
@@ -30,7 +65,7 @@ export function getNoteFromFrequency(frequency: number, referenceA: number = 440
   };
 }
 
-export function usePitchDetection(referenceA: number = 440) {
+export function usePitchDetection(referenceA: number = 440, targetFrequencies?: { note: string, freq: number, octave?: number }[]) {
   const [pitchData, setPitchData] = useState<PitchData | null>(null);
   const [isActive, setIsActive] = useState(false);
   
@@ -185,16 +220,21 @@ export function usePitchDetection(referenceA: number = 440) {
         
       lastFrequency.current = smoothedFreq;
       
-      const { note, cents: rawCents } = getNoteFromFrequency(smoothedFreq, referenceRef.current);
+      const { note, cents: rawCents, targetFreq } = getNoteFromFrequency(smoothedFreq, referenceRef.current, targetFrequencies);
 
       // 2. Adaptive Cents Smoothing for stable display
       // When the note is the same, we apply heavy smoothing to cents to avoid "jittery" needle
       let smoothedCents = rawCents;
       if (note === consecutiveNoteRef.current) {
         consecutiveCountRef.current++;
+        
+        // Digital "Lock-in" / Deadzone logic: 
+        // If we are within 0.8 cents of absolute perfect, we force it to 0 to prevent jitter
+        const targetVal = Math.abs(rawCents) < 0.8 ? 0 : rawCents;
+        
         // The closer we are to zero, the more we smooth to provide a "lock-in" feel
-        const closenessFactor = Math.abs(rawCents) < 5 ? 0.15 : 0.4;
-        smoothedCents = (lastCents.current * (1 - closenessFactor)) + (rawCents * closenessFactor);
+        const closenessFactor = Math.abs(rawCents) < 3 ? 0.08 : 0.35;
+        smoothedCents = (lastCents.current * (1 - closenessFactor)) + (targetVal * closenessFactor);
       } else {
         consecutiveNoteRef.current = note;
         consecutiveCountRef.current = 1;
@@ -209,7 +249,8 @@ export function usePitchDetection(referenceA: number = 440) {
           note,
           cents: Math.round(smoothedCents),
           clarity,
-          amplitude: rms
+          amplitude: rms,
+          targetFreq
         });
       }
     }

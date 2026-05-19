@@ -1573,7 +1573,15 @@ export default function App() {
     }
   }, [settings.masterVolume]);
 
-  const { pitchData, isActive, start, stop } = usePitchDetection(referenceFreq);
+  const targetStrings = React.useMemo(() => {
+    switch (instrument) {
+      case 'ukulele': return UKULELE_STRINGS;
+      case '12string': return TWELVE_STRING_STRINGS;
+      default: return GUITAR_STRINGS;
+    }
+  }, [instrument]);
+
+  const { pitchData, isActive, start, stop } = usePitchDetection(referenceFreq, targetStrings);
 
   useEffect(() => {
     stopAllSound();
@@ -2880,6 +2888,8 @@ export default function App() {
                   tunedStrings={tunedStrings} 
                   activeNote={pitchData?.note}
                   activeCents={pitchData?.cents}
+                  activeFreq={pitchData?.frequency}
+                  targetFreq={pitchData?.targetFreq}
                   bodyColor={guitarColor}
                   className="opacity-60 top-[-100px] bottom-0"
                 />
