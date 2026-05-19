@@ -1,0 +1,10 @@
+{
+  "name": "Remix: Quintencirkel",
+  "description": "A high-fidelity boutique guitar tuning station featuring precision pitch detection and a physical luthier-inspired interface.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

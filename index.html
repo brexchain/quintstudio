@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="description" content="Quint Studio — The ultimate music composition and harmonic exploration tool. Design arrangements, explore the circle of fifths, and tune your instruments with professional accuracy." />
+    <meta name="keywords" content="music studio, chord arranger, tuner, metronome, guitar tuner, circle of fifths, music theory" />
+    <meta property="og:title" content="Quint Studio — Pro Music Arrangement" />
+    <meta property="og:description" content="Advanced music composition studio with high-fidelity synthesis and pro arraging timeline." />
+    <meta property="og:type" content="website" />
+    <title>Quint Studio — Pro Arrangement & Tuning</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
+  </body>
+</html>
+
